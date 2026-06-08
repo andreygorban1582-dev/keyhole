@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HashIt — Hash Generator (MD5, SHA-1, SHA-256, SHA-512)</title>
+<meta name="description" content="Free online hash generator. Generate MD5, SHA-1, SHA-256, SHA-512 hashes from any text. Uses Web Crypto API.">
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--dim:#8b949e;--accent:#58a6ff;--green:#3fb950;--orange:#d2991d;--radius:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+header h1{font-size:1.1rem;display:flex;align-items:center;gap:8px}
+header nav{display:flex;gap:10px;align-items:center}
+header nav a{color:var(--dim);text-decoration:none;font-size:0.8rem}
+header nav a:hover{color:var(--text)}
+main{flex:1;max-width:800px;width:100%;margin:0 auto;padding:24px 16px}
+.ad-slot{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);padding:12px;text-align:center;font-size:0.78rem;color:var(--dim);margin-bottom:16px}
+.ad-slot a{color:var(--accent)}
+.tool-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+.tool-box h2{font-size:1rem;margin-bottom:14px;color:var(--accent);display:flex;align-items:center;gap:6px}
+textarea,input[type="text"]{width:100%;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'SF Mono',Consolas,monospace;font-size:0.85rem;resize:vertical;outline:none}
+textarea:focus,input:focus{border-color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);cursor:pointer;font-size:0.85rem;font-weight:600;transition:opacity 0.15s}
+.btn:hover{opacity:0.85}
+.btn-sm{padding:6px 12px;font-size:0.78rem}
+.btn-green{background:var(--green)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.hash-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-top:10px;display:flex;align-items:center;gap:10px;transition:border-color 0.2s}
+.hash-card:hover{border-color:var(--accent)}
+.hash-label{font-size:0.75rem;font-weight:600;color:var(--dim);min-width:60px;text-transform:uppercase;letter-spacing:0.5px}
+.hash-value{font-family:'SF Mono',Consolas,monospace;font-size:0.78rem;color:var(--text);word-break:break-all;flex:1;user-select:all}
+.hash-copy{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;background:var(--border);color:var(--dim);border:none;border-radius:var(--radius);cursor:pointer;font-size:0.73rem;white-space:nowrap;transition:all 0.15s}
+.hash-copy:hover{background:var(--accent);color:#fff}
+.hash-copy.copied{background:var(--green);color:#fff}
+.no-hash{color:var(--dim);font-size:0.78rem;font-style:italic;text-align:center;padding:20px}
+.bmc{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:#ff813f;color:#fff;text-decoration:none;border-radius:var(--radius);font-size:0.85rem;font-weight:600;transition:opacity 0.15s}
+.bmc:hover{opacity:0.85}
+.footer-bar{text-align:center;padding:12px;font-size:0.72rem;color:var(--dim);border-top:1px solid var(--border);background:var(--surface)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔐 HashIt</h1>
+  <nav>
+    <a href="https://andreygorban1582-dev.github.io/keyhole/">KeyHole</a>
+    <button class="btn btn-sm" onclick="hashAll()">⚡ Hash</button>
+  </nav>
+</header>
+
+<main>
+  <div class="ad-slot">📢 Advertisement — <a href="https://a-ads.com?partner=2305445">Advertise here</a></div>
+
+  <div class="tool-box">
+    <h2>🔐 Generate Hash from Text</h2>
+    <textarea id="inputText" rows="3" placeholder="Type or paste text here — hashes update as you type..."></textarea>
+
+    <div id="hashResults">
+      <div class="no-hash">Start typing to see hashes generated in real-time…</div>
+    </div>
+  </div>
+
+  <div style="text-align:center">
+    <a href="https://www.buymeacoffee.com/keyhole" class="bmc" target="_blank">☕ Buy me a coffee</a>
+  </div>
+</main>
+
+<div class="footer-bar">© 2026 HashIt — Free online hash generator</div>
+
+<script>
+/* ===== MD5 Implementation (SubtleCrypto doesn't support MD5) ===== */
+function md5(str) {
+  function rl(v,s){return (v<<s)|(v>>>(32-s))}
+  function cmn(q,a,b,x,s,t){return rl((a+q+x+t)|0,s)+b}
+  function ff(a,b,c,d,x,s,t){return cmn((b&c)|(~b&d),a,b,x,s,t)}
+  function gg(a,b,c,d,x,s,t){return cmn((b&d)|(c&~d),a,b,x,s,t)}
+  function hh(a,b,c,d,x,s,t){return cmn(b^c^d,a,b,x,s,t)}
+  function ii(a,b,c,d,x,s,t){return cmn(c^(b|~d),a,b,x,s,t)}
+
+  var msg = unescape(encodeURIComponent(str));
+  var bc = msg.length * 8;
+  var m = [];
+  for (var i = 0; i < msg.length; i++) m[i >>> 2] |= msg.charCodeAt(i) << ((i % 4) * 8);
+  m[bc >>> 5] |= 128 << (bc % 32);
+  m[(((bc + 64) >>> 9) << 4) + 14] = bc;
+
+  var a = 0x67452301, b = 0xEFCDAB89, c = 0x98BADCFE, d = 0x10325476;
+  for (var i = 0; i < m.length; i += 16) {
+    var aa = a, bb = b, cc = c, dd = d;
+    a = ff(a,b,c,d,m[i+0], 7,0xD76AA478);d = ff(d,a,b,c,m[i+1],12,0xE8C7B756);
+    c = ff(c,d,a,b,m[i+2],17,0x242070DB);b = ff(b,c,d,a,m[i+3],22,0xC1BDCEEE);
+    a = ff(a,b,c,d,m[i+4], 7,0xF57C0FAF);d = ff(d,a,b,c,m[i+5],12,0x4787C62A);
+    c = ff(c,d,a,b,m[i+6],17,0xA8304613);b = ff(b,c,d,a,m[i+7],22,0xFD469501);
+    a = ff(a,b,c,d,m[i+8], 7,0x698098D8);d = ff(d,a,b,c,m[i+9],12,0x8B44F7AF);
+    c = ff(c,d,a,b,m[i+10],17,0xFFFF5BB1);b = ff(b,c,d,a,m[i+11],22,0x895CD7BE);
+    a = ff(a,b,c,d,m[i+12], 7,0x6B901122);d = ff(d,a,b,c,m[i+13],12,0xFD987193);
+    c = ff(c,d,a,b,m[i+14],17,0xA679438E);b = ff(b,c,d,a,m[i+15],22,0x49B40821);
+    a = gg(a,b,c,d,m[i+1], 5,0xF61E2562);d = gg(d,a,b,c,m[i+6], 9,0xC040B340);
+    c = gg(c,d,a,b,m[i+11],14,0x265E5A51);b = gg(b,c,d,a,m[i+0],20,0xE9B6C7AA);
+    a = gg(a,b,c,d,m[i+5], 5,0xD62F105D);d = gg(d,a,b,c,m[i+10], 9,0x02441453);
+    c = gg(c,d,a,b,m[i+15],14,0xD8A1E681);b = gg(b,c,d,a,m[i+4],20,0xE7D3FBC8);
+    a = gg(a,b,c,d,m[i+9], 5,0x21E1CDE6);d = gg(d,a,b,c,m[i+14], 9,0xC33707D6);
+    c = gg(c,d,a,b,m[i+3],14,0xF4D50D87);b = gg(b,c,d,a,m[i+8],20,0x455A14ED);
+    a = gg(a,b,c,d,m[i+13], 5,0xA9E3E905);d = gg(d,a,b,c,m[i+2], 9,0xFCEFA3F8);
+    c = gg(c,d,a,b,m[i+7],14,0x676F02D9);b = gg(b,c,d,a,m[i+12],20,0x8D2A4C8A);
+    a = hh(a,b,c,d,m[i+5], 4,0xFFFA3942);d = hh(d,a,b,c,m[i+8],11,0x8771F681);
+    c = hh(c,d,a,b,m[i+11],16,0x6D9D6122);b = hh(b,c,d,a,m[i+14],23,0xFDE5380C);
+    a = hh(a,b,c,d,m[i+1], 4,0xA4BEEA44);d = hh(d,a,b,c,m[i+4],11,0x4BDECFA9);
+    c = hh(c,d,a,b,m[i+7],16,0xF6BB4B60);b = hh(b,c,d,a,m[i+10],23,0xBEBFBC70);
+    a = hh(a,b,c,d,m[i+13], 4,0x289B7EC6);d = hh(d,a,b,c,m[i+0],11,0xEAA127FA);
+    c = hh(c,d,a,b,m[i+3],16,0xD4EF3085);b = hh(b,c,d,a,m[i+6],23,0x04881D05);
+    a = hh(a,b,c,d,m[i+9], 4,0xD9D4D039);d = hh(d,a,b,c,m[i+12],11,0xE6DB99E5);
+    c = hh(c,d,a,b,m[i+15],16,0x1FA27CF8);b = hh(b,c,d,a,m[i+2],23,0xC4AC5665);
+    a = ii(a,b,c,d,m[i+0], 6,0xF4292244);d = ii(d,a,b,c,m[i+7],10,0x432AFF97);
+    c = ii(c,d,a,b,m[i+14],15,0xAB9423A7);b = ii(b,c,d,a,m[i+5],21,0xFC93A039);
+    a = ii(a,b,c,d,m[i+12], 6,0x655B59C3);d = ii(d,a,b,c,m[i+1],10,0x8F0CCC92);
+    c = ii(c,d,a,b,m[i+8],15,0xFFEFF47D);b = ii(b,c,d,a,m[i+15],21,0x85845DD1);
+    a = ii(a,b,c,d,m[i+6], 6,0x6FA87E4F);d = ii(d,a,b,c,m[i+13],10,0xFE2CE6E0);
+    c = ii(c,d,a,b,m[i+4],15,0xA3014314);b = ii(b,c,d,a,m[i+11],21,0x4E0811A1);
+    a = ii(a,b,c,d,m[i+2], 6,0xF7537E82);d = ii(d,a,b,c,m[i+9],10,0xBD3AF235);
+    c = ii(c,d,a,b,m[i+0],15,0x2AD7D2BB);b = ii(b,c,d,a,m[i+7],21,0xEB86D391);
+    a = (a + aa) | 0; b = (b + bb) | 0; c = (c + cc) | 0; d = (d + dd) | 0;
+  }
+  function toHex(v){var h='';for(var i=0;i<4;i++)h+=((v>>(i*8))&0xFF).toString(16).padStart(2,'0');return h}
+  return toHex(a)+toHex(b)+toHex(c)+toHex(d);
+}
+
+/* ===== SubtleCrypto-based hashing ===== */
+async function subtleHash(algo, text) {
+  var enc = new TextEncoder().encode(text);
+  var buf = await crypto.subtle.digest(algo, enc);
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+}
+
+/* ===== UI logic ===== */
+var debounceTimer = null;
+
+function hashAll() {
+  var text = document.getElementById('inputText').value;
+  if (!text) {
+    document.getElementById('hashResults').innerHTML = '<div class="no-hash">Start typing to see hashes generated in real-time…</div>';
+    return;
+  }
+
+  // MD5 synchronously
+  var md5Val = md5(text);
+
+  // Show loading state
+  var container = document.getElementById('hashResults');
+  container.innerHTML = renderCards(md5Val, '…', '…', '…');
+
+  // SHA family via SubtleCrypto
+  Promise.all([
+    subtleHash('SHA-1', text),
+    subtleHash('SHA-256', text),
+    subtleHash('SHA-512', text)
+  ]).then(function(res) {
+    container.innerHTML = renderCards(md5Val, res[0], res[1], res[2]);
+  });
+}
+
+function renderCards(md5Val, sha1Val, sha256Val, sha512Val) {
+  return [
+    {label:'MD5',        value:md5Val,   cls:'',         icon:'🔒'},
+    {label:'SHA-1',      value:sha1Val,  cls:'',         icon:'🔑'},
+    {label:'SHA-256',    value:sha256Val,cls:'',         icon:'🔐'},
+    {label:'SHA-512',    value:sha512Val,cls:'',         icon:'🛡️'}
+  ].map(function(h){
+    return '<div class="hash-card">'+
+      '<span class="hash-label">'+h.icon+' '+h.label+'</span>'+
+      '<span class="hash-value">'+h.value+'</span>'+
+      '<button class="hash-copy" onclick="copyHash(this,\''+escapeHtml(h.value)+'\')">📋 Copy</button>'+
+    '</div>';
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function copyHash(btn, hash) {
+  navigator.clipboard.writeText(hash).then(function(){
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(function(){
+      btn.textContent = '📋 Copy';
+      btn.classList.remove('copied');
+    }, 1500);
+  }).catch(function(){
+    btn.textContent = '❌ Failed';
+    setTimeout(function(){ btn.textContent = '📋 Copy'; }, 1500);
+  });
+}
+
+/* ===== Real-time hashing on input ===== */
+document.getElementById('inputText').addEventListener('input', function() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(hashAll, 200);
+});
+
+// Initial call for any pre-filled text
+hashAll();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiffCheck — Text Comparison Tool</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --green-bg: rgba(63,185,80,0.15);
+    --red: #f85149;
+    --red-bg: rgba(248,81,73,0.15);
+    --ad-bg: #1a1f2b;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  header h1 .icon { font-size: 1.5rem; }
+  .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: #21262d; border-color: #484f58; }
+  .btn-primary {
+    background: #238636;
+    border-color: rgba(240,246,252,0.1);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #2ea043; }
+  .btn-sm { padding: 5px 12px; font-size: 0.82rem; }
+  .btn-ghost { border-color: transparent; background: transparent; }
+
+  /* ── Layout ── */
+  .main-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 24px;
+    gap: 18px;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ── Panels (two textareas side-by-side) ── */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    min-height: 220px;
+  }
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .panel-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-label .count {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+  .panel textarea {
+    flex: 1;
+    min-height: 200px;
+    padding: 12px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Consolas', monospace;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    resize: vertical;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .panel textarea:focus { border-color: var(--accent); }
+  .panel textarea::placeholder { color: #484f58; }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Diff Output ── */
+  .diff-output {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    display: none;
+  }
+  .diff-output.visible { display: block; }
+
+  .diff-stats {
+    display: flex;
+    gap: 18px;
+    padding: 10px 16px;
+    background: #0d1117;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .diff-stats span { display: flex; align-items: center; gap: 5px; }
+  .stat-added { color: var(--green); }
+  .stat-removed { color: var(--red); }
+  .stat-unchanged { color: var(--text-dim); }
+
+  .diff-lines {
+    max-height: 500px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Consolas', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+  .diff-line {
+    display: flex;
+    padding: 1px 16px;
+    min-height: 1.6em;
+    align-items: flex-start;
+  }
+  .diff-line .ln {
+    flex-shrink: 0;
+    width: 48px;
+    text-align: right;
+    padding-right: 12px;
+    color: var(--text-dim);
+    user-select: none;
+  }
+  .diff-line .marker {
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+    font-weight: 700;
+    user-select: none;
+  }
+  .diff-line .content {
+    white-space: pre-wrap;
+    word-break: break-all;
+    flex: 1;
+  }
+
+  .diff-line.added {
+    background: var(--green-bg);
+    color: var(--green);
+  }
+  .diff-line.added .marker { color: var(--green); }
+  .diff-line.removed {
+    background: var(--red-bg);
+    color: var(--red);
+  }
+  .diff-line.removed .marker { color: var(--red); }
+  .diff-line.unchanged {
+    color: var(--text-dim);
+  }
+  .diff-line.unchanged .marker { color: var(--text-dim); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+  }
+  .empty-state .emoji { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+  /* ── Ad Slot ── */
+  .ad-slot {
+    background: var(--ad-bg);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 14px 20px;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .ad-slot a { color: var(--accent); text-decoration: none; }
+  .ad-slot a:hover { text-decoration: underline; }
+
+  /* ── Footer / BMC ── */
+  footer {
+    text-align: center;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 0.82rem;
+    color: var(--text-dim);
+  }
+  .bmc {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: #ffdd00;
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.82rem;
+    transition: background .15s;
+  }
+  .bmc:hover { background: #ffe033; }
+  .bmc .coffee { font-size: 1.1rem; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .panels { grid-template-columns: 1fr; }
+    .main-container { padding: 12px; }
+    header { padding: 10px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <span class="icon">&#x1F50D;</span>
+    DiffCheck
+  </h1>
+  <div class="header-actions">
+    <button class="btn btn-sm btn-ghost" onclick="swapTexts()" title="Swap left and right">&#x21C4; Swap</button>
+    <button class="btn btn-sm btn-ghost" onclick="clearAll()">Clear</button>
+  </div>
+</header>
+
+<div class="main-container">
+
+  <!-- Ad Slot -->
+  <div class="ad-slot">
+    &#x1F4E3; <strong>Ad Space</strong> &mdash; Your ad could be here.
+    <a href="mailto:ads@example.com">Contact us</a>
+  </div>
+
+  <!-- Side-by-side textareas -->
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-label">
+        <span>Original Text</span>
+        <span class="count" id="leftCount">0 lines</span>
+      </div>
+      <textarea id="leftInput" placeholder="Paste original text here..." oninput="updateCount('left')"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-label">
+        <span>Modified Text</span>
+        <span class="count" id="rightCount">0 lines</span>
+      </div>
+      <textarea id="rightInput" placeholder="Paste modified text here..." oninput="updateCount('right')"></textarea>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="runDiff()">
+      &#x25B6; Compare
+    </button>
+    <span style="color:var(--text-dim);font-size:0.8rem;">or press <kbd style="background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:1px 5px;">Ctrl+Enter</kbd></span>
+  </div>
+
+  <!-- Diff Output -->
+  <div class="diff-output" id="diffOutput">
+    <div class="diff-stats" id="diffStats"></div>
+    <div class="diff-lines" id="diffLines">
+      <div class="empty-state">
+        <span class="emoji">&#x1F4CB;</span>
+        <p>Paste two texts and click <strong>Compare</strong> to see the differences.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BMC -->
+  <footer>
+    <p style="margin-bottom:8px;">Enjoying DiffCheck?</p>
+    <a class="bmc" href="https://www.buymeacoffee.com/diffcheck" target="_blank" rel="noopener">
+      <span class="coffee">&#x2615;</span> Buy me a coffee
+    </a>
+  </footer>
+
+</div>
+
+<script>
+  // ── Line count helpers ──
+  function updateCount(side) {
+    const el = document.getElementById(side + 'Input');
+    const count = document.getElementById(side + 'Count');
+    const lines = el.value ? el.value.split('\n').length : 0;
+    count.textContent = lines + ' line' + (lines !== 1 ? 's' : '');
+  }
+
+  function swapTexts() {
+    const left = document.getElementById('leftInput');
+    const right = document.getElementById('rightInput');
+    [left.value, right.value] = [right.value, left.value];
+    updateCount('left');
+    updateCount('right');
+    runDiff();
+  }
+
+  function clearAll() {
+    document.getElementById('leftInput').value = '';
+    document.getElementById('rightInput').value = '';
+    updateCount('left');
+    updateCount('right');
+    const out = document.getElementById('diffOutput');
+    out.classList.remove('visible');
+    document.getElementById('diffLines').innerHTML =
+      '<div class="empty-state"><span class="emoji">&#x1F4CB;</span><p>Paste two texts and click <strong>Compare</strong> to see the differences.</p></div>';
+  }
+
+  // ── LCS-based line diff ──
+  function lcsTable(a, b) {
+    const m = a.length, n = b.length;
+    // Use two rows to save memory; but we need full table for backtracking
+    const dp = Array.from({length: m+1}, () => new Int32Array(n+1));
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        if (a[i-1] === b[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+        else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+      }
+    }
+    return dp;
+  }
+
+  function backtrack(dp, a, b, i, j) {
+    const ops = []; // 'keep', 'ins', 'del'
+    while (i > 0 || j > 0) {
+      if (i > 0 && j > 0 && a[i-1] === b[j-1]) {
+        ops.push({type:'keep', oldIdx: i-1, newIdx: j-1, line: a[i-1]});
+        i--; j--;
+      } else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) {
+        ops.push({type:'ins', newIdx: j-1, line: b[j-1]});
+        j--;
+      } else {
+        ops.push({type:'del', oldIdx: i-1, line: a[i-1]});
+        i--;
+      }
+    }
+    return ops.reverse();
+  }
+
+  function computeDiff(oldLines, newLines) {
+    const dp = lcsTable(oldLines, newLines);
+    return backtrack(dp, oldLines, newLines, oldLines.length, newLines.length);
+  }
+
+  // ── Render ──
+  function runDiff() {
+    const leftVal = document.getElementById('leftInput').value;
+    const rightVal = document.getElementById('rightInput').value;
+    const oldLines = leftVal === '' ? [] : leftVal.split('\n');
+    const newLines = rightVal === '' ? [] : rightVal.split('\n');
+
+    const ops = computeDiff(oldLines, newLines);
+
+    let added = 0, removed = 0, unchanged = 0;
+    let html = '';
+    let oldLineNum = 0, newLineNum = 0;
+
+    for (const op of ops) {
+      if (op.type === 'keep') {
+        oldLineNum++; newLineNum++;
+        unchanged++;
+        html += `<div class="diff-line unchanged">
+          <span class="ln">${oldLineNum}</span><span class="ln">${newLineNum}</span>
+          <span class="marker"> </span>
+          <span class="content">${esc(op.line)}</span>
+        </div>`;
+      } else if (op.type === 'del') {
+        oldLineNum++;
+        removed++;
+        html += `<div class="diff-line removed">
+          <span class="ln">${oldLineNum}</span><span class="ln"></span>
+          <span class="marker">-</span>
+          <span class="content">${esc(op.line)}</span>
+        </div>`;
+      } else if (op.type === 'ins') {
+        newLineNum++;
+        added++;
+        html += `<div class="diff-line added">
+          <span class="ln"></span><span class="ln">${newLineNum}</span>
+          <span class="marker">+</span>
+          <span class="content">${esc(op.line)}</span>
+        </div>`;
+      }
+    }
+
+    // Stats
+    document.getElementById('diffStats').innerHTML =
+      `<span class="stat-added">+${added} added</span>
+       <span class="stat-removed">-${removed} removed</span>
+       <span class="stat-unchanged">&#x2261; ${unchanged} unchanged</span>`;
+
+    document.getElementById('diffLines').innerHTML = html || '<div class="empty-state"><span class="emoji">&#x2705;</span><p>Texts are identical!</p></div>';
+    document.getElementById('diffOutput').classList.add('visible');
+  }
+
+  function esc(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Keyboard shortcut ──
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      runDiff();
+    }
+  });
+
+  // Initial count
+  updateCount('left');
+  updateCount('right');
+</script>
+
+</body>
+</html>

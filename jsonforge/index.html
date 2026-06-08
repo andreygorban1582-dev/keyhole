@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>JsonForge — Format, Minify & Validate JSON</title>
+<meta name="description" content="Free online JSON formatter, minifier, and validator. Prettify, minify, and validate your JSON instantly.">
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --dim: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --orange: #d2991d;
+  --red: #f85149;
+  --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+header h1 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+header nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+header nav a {
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+header nav a:hover { color: var(--text); }
+main {
+  flex: 1;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+.tool-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.tool-box h2 {
+  font-size: 1rem;
+  margin-bottom: 14px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+textarea {
+  width: 100%;
+  padding: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.85rem;
+  resize: vertical;
+  outline: none;
+  line-height: 1.5;
+  tab-size: 2;
+}
+textarea:focus { border-color: var(--accent); }
+#jsonInput {
+  min-height: 280px;
+}
+#jsonOutput {
+  min-height: 200px;
+  max-height: 500px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.85; }
+.btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+.btn-green { background: var(--green); }
+.btn-orange { background: var(--orange); }
+.btn-red { background: var(--red); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-outline:hover { border-color: var(--accent); }
+.row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 12px 0;
+}
+.result-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-top: 14px;
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 400px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+.result-box.success { border-color: var(--green); }
+.result-box.error { border-color: var(--red); color: var(--red); }
+.result-box.info { border-color: var(--accent); color: var(--dim); }
+.status {
+  font-size: 0.78rem;
+  margin-bottom: 8px;
+  color: var(--dim);
+}
+.status.success { color: var(--green); }
+.status.error { color: var(--red); }
+.bmc {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #FFDD00;
+  color: #000;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.bmc:hover { opacity: 0.9; }
+.ad-slot {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  margin: 16px 0;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dim);
+  font-size: 0.8rem;
+}
+.footer-bar {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.75rem;
+  color: var(--dim);
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+.copied-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--green);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.copied-toast.show { opacity: 1; }
+.stat-line {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--dim);
+  margin: 6px 0;
+}
+.stat-line span strong { color: var(--text); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🔨 JsonForge</h1>
+  <nav>
+    <a href="https://andreygorban1582-dev.github.io/keyhole/">KeyHole</a>
+    <button class="btn btn-sm btn-outline" onclick="clearAll()">🗑 Clear</button>
+  </nav>
+</header>
+
+<main>
+  <div class="ad-slot">📢 Advertisement — <a href="https://a-ads.com?partner=2305445" style="color:var(--accent)">Advertise here</a></div>
+
+  <div class="tool-box">
+    <h2>📝 JSON Input</h2>
+    <textarea id="jsonInput" placeholder='Paste your JSON here…&#10;&#10;{"example": true, "numbers": [1, 2, 3]}' spellcheck="false"></textarea>
+    <div class="row">
+      <button class="btn" onclick="prettify()">✨ Prettify</button>
+      <button class="btn btn-orange" onclick="minify()">📦 Minify</button>
+      <button class="btn btn-green" onclick="validate()">✅ Validate</button>
+      <button class="btn btn-outline btn-sm" onclick="loadSample()">📋 Load Sample</button>
+    </div>
+  </div>
+
+  <div class="tool-box">
+    <h2>📄 Output</h2>
+    <div class="row" style="margin-top:0">
+      <span class="status" id="statusBar">Ready — paste JSON above</span>
+      <span style="flex:1"></span>
+      <button class="btn btn-sm btn-outline" id="copyBtn" onclick="copyOutput()" disabled>📋 Copy</button>
+    </div>
+    <div class="result-box info" id="resultArea">Waiting for input…</div>
+    <div class="stat-line" id="statLine" style="display:none"></div>
+  </div>
+
+  <div style="text-align:center">
+    <a href="https://www.buymeacoffee.com/keyhole" class="bmc" target="_blank">☕ Buy me a coffee</a>
+  </div>
+</main>
+
+<div class="footer-bar">© 2026 JsonForge — Free online JSON formatter, minifier &amp; validator</div>
+<div class="copied-toast" id="toast">✅ Copied!</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const input = $('jsonInput');
+const result = $('resultArea');
+const statusBar = $('statusBar');
+const copyBtn = $('copyBtn');
+const statLine = $('statLine');
+const toast = $('toast');
+
+function parseJSON(raw) {
+  let obj;
+  try { obj = JSON.parse(raw); } catch (e) {
+    // Try to extract line:column from error message
+    const m = e.message.match(/line\s+(\d+)\s+column\s+(\d+)/i);
+    let extra = '';
+    if (m) {
+      const lines = raw.split('\n');
+      const ln = +m[1];
+      const context = lines[ln - 1] || '';
+      extra = '\n→ Line ' + m[1] + ', Column ' + m[2] + ': ' + (context.length > 60 ? context.slice(0, 60) + '…' : context);
+    }
+    throw new Error(e.message + extra);
+  }
+  if (obj === null) throw new Error('Input is null');
+  if (typeof obj !== 'object' && typeof obj !== 'number' && typeof obj !== 'string' && typeof obj !== 'boolean') {
+    throw new Error('Input is not valid JSON (root must be object, array, string, number, boolean, or null)');
+  }
+  return obj;
+}
+
+function showResult(cls, statusCls, statusText, content) {
+  result.className = 'result-box ' + cls;
+  result.textContent = content;
+  statusBar.className = 'status ' + statusCls;
+  statusBar.textContent = statusText;
+  copyBtn.disabled = false;
+}
+
+function showStats(raw) {
+  const trimmed = raw.trim();
+  const obj = JSON.parse(trimmed);
+  const jsonStr = JSON.stringify(obj);
+  const bytes = new Blob([jsonStr]).size;
+  const lines = trimmed.split('\n').length;
+  const pretty = JSON.stringify(obj, null, 2);
+  const prettyBytes = new Blob([pretty]).size;
+
+  let typeLabel = '';
+  if (Array.isArray(obj)) typeLabel = 'Array';
+  else if (typeof obj === 'object') typeLabel = 'Object';
+  else typeLabel = typeof obj;
+
+  statLine.style.display = 'flex';
+  statLine.innerHTML =
+    '<span>Type: <strong>' + typeLabel + '</strong></span>' +
+    '<span>Size: <strong>' + bytes.toLocaleString() + ' bytes</strong></span>' +
+    '<span>Lines: <strong>' + lines + '</strong></span>' +
+    '<span>Pretty: <strong>' + prettyBytes.toLocaleString() + ' bytes</strong></span>';
+}
+
+function prettify() {
+  const raw = input.value.trim();
+  if (!raw) {
+    showResult('info', '', 'Ready', 'Waiting for input…');
+    copyBtn.disabled = true;
+    statLine.style.display = 'none';
+    return;
+  }
+  try {
+    const obj = parseJSON(raw);
+    const pretty = JSON.stringify(obj, null, 2);
+    showResult('success', 'success', '✓ Prettified', pretty);
+    showStats(raw);
+  } catch (e) {
+    showResult('error', 'error', '✗ Invalid JSON', e.message);
+    statLine.style.display = 'none';
+  }
+}
+
+function minify() {
+  const raw = input.value.trim();
+  if (!raw) {
+    showResult('info', '', 'Ready', 'Waiting for input…');
+    copyBtn.disabled = true;
+    statLine.style.display = 'none';
+    return;
+  }
+  try {
+    const obj = parseJSON(raw);
+    const minified = JSON.stringify(obj);
+    // Also show byte comparison
+    const rawBytes = new Blob([raw]).size;
+    const minBytes = new Blob([minified]).size;
+    const savings = rawBytes > 0 ? Math.round((1 - minBytes / rawBytes) * 100) : 0;
+    showResult('success', 'success', '✓ Minified (' + savings + '% smaller)', minified);
+    showStats(raw);
+  } catch (e) {
+    showResult('error', 'error', '✗ Invalid JSON', e.message);
+    statLine.style.display = 'none';
+  }
+}
+
+function validate() {
+  const raw = input.value.trim();
+  if (!raw) {
+    showResult('info', '', 'Ready', 'Waiting for input…');
+    copyBtn.disabled = true;
+    statLine.style.display = 'none';
+    return;
+  }
+  try {
+    const obj = parseJSON(raw);
+    let details = '';
+    if (Array.isArray(obj)) details = 'Array with ' + obj.length + ' item' + (obj.length !== 1 ? 's' : '');
+    else if (typeof obj === 'object') {
+      const keys = Object.keys(obj);
+      details = 'Object with ' + keys.length + ' key' + (keys.length !== 1 ? 's' : '');
+    }
+    showResult('success', 'success', '✓ Valid JSON — ' + details, JSON.stringify(obj, null, 2));
+    showStats(raw);
+  } catch (e) {
+    showResult('error', 'error', '✗ Invalid JSON', e.message);
+    statLine.style.display = 'none';
+  }
+}
+
+function copyOutput() {
+  const text = result.textContent;
+  if (!text || text === 'Waiting for input…') return;
+  navigator.clipboard.writeText(text).then(() => {
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  });
+}
+
+function clearAll() {
+  input.value = '';
+  result.className = 'result-box info';
+  result.textContent = 'Waiting for input…';
+  statusBar.className = 'status';
+  statusBar.textContent = 'Ready — paste JSON above';
+  copyBtn.disabled = true;
+  statLine.style.display = 'none';
+}
+
+function loadSample() {
+  input.value = JSON.stringify({
+    "name": "JsonForge",
+    "version": "1.0.0",
+    "description": "A beautiful JSON formatter & validator",
+    "features": ["prettify", "minify", "validate", "copy"],
+    "settings": {
+      "indent": 2,
+      "theme": "dark",
+      "autovalidate": false
+    },
+    "active": true,
+    "count": 42,
+    "nested": {
+      "level2": {
+        "level3": [1, 2, 3, null, true, false]
+      }
+    }
+  }, null, 2);
+  prettify();
+}
+</script>
+
+</body>
+</html>

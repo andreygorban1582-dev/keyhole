@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>QrGen — Free QR Code Generator</title>
+<meta name="description" content="Free online QR code generator. Create QR codes from URLs or text instantly. Download as PNG.">
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --dim: #8b949e;
+  --accent: #58a6ff;
+  --green: #3fb950;
+  --orange: #d2991d;
+  --radius: 8px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+header h1 { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+header nav { display: flex; gap: 10px; align-items: center; }
+header nav a { color: var(--dim); text-decoration: none; font-size: 0.8rem; }
+header nav a:hover { color: var(--text); }
+main {
+  flex: 1;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+.ad-slot {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--dim);
+  margin-bottom: 16px;
+}
+.ad-slot a { color: var(--accent); text-decoration: none; }
+.tool-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.tool-box h2 {
+  font-size: 1rem;
+  margin-bottom: 14px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+textarea, input[type="text"], input[type="url"] {
+  width: 100%;
+  padding: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 0.85rem;
+  resize: vertical;
+  outline: none;
+}
+textarea:focus, input:focus { border-color: var(--accent); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.btn:hover { opacity: 0.85; }
+.btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+.btn-green { background: var(--green); }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+.qr-container {
+  text-align: center;
+  padding: 20px;
+  margin-top: 14px;
+  background: #fff;
+  border-radius: var(--radius);
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.qr-container img { max-width: 100%; display: block; }
+.qr-container .placeholder {
+  color: #999;
+  font-size: 0.85rem;
+}
+.qr-size-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.qr-size-controls label { font-size: 0.8rem; color: var(--dim); }
+.qr-size-controls select {
+  padding: 6px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.8rem;
+  outline: none;
+}
+.bmc {
+  display: block;
+  text-align: center;
+  color: var(--orange);
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 8px;
+}
+.bmc:hover { text-decoration: underline; }
+.footer-bar {
+  text-align: center;
+  padding: 12px;
+  color: var(--dim);
+  font-size: 0.75rem;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+#downloadBtn { display: none; }
+.error-msg { color: var(--orange); font-size: 0.8rem; margin-top: 8px; display: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📱 QrGen</h1>
+  <nav>
+    <a href="https://andreygorban1582-dev.github.io/keyhole/">KeyHole</a>
+  </nav>
+</header>
+<main>
+  <div class="ad-slot">📢 Advertisement — <a href="https://a-ads.com?partner=2305445">Advertise here</a></div>
+  <div class="tool-box">
+    <h2>📱 Generate QR Code</h2>
+    <input type="text" id="qrInput" placeholder="Enter URL or text to encode..." onkeydown="if(event.key==='Enter')generate()">
+    <div class="row">
+      <button class="btn" onclick="generate()">🔲 Generate</button>
+      <button class="btn btn-green" id="downloadBtn" onclick="downloadQR()">⬇ Download PNG</button>
+    </div>
+
+    <div class="qr-size-controls">
+      <label for="qrSize">Size:</label>
+      <select id="qrSize" onchange="generate()">
+        <option value="200">200×200</option>
+        <option value="300" selected>300×300</option>
+        <option value="400">400×400</option>
+        <option value="500">500×500</option>
+        <option value="600">600×600</option>
+      </select>
+    </div>
+
+    <div class="qr-container" id="qrContainer">
+      <span class="placeholder">Enter text above and click Generate</span>
+    </div>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+  <a href="https://www.buymeacoffee.com/keyhole" class="bmc" target="_blank">☕ Buy me a coffee</a>
+</main>
+<div class="footer-bar">© 2026 QrGen — Free online QR code generator</div>
+
+<script>
+let currentQRUrl = '';
+
+function generate() {
+  const input = document.getElementById('qrInput').value.trim();
+  const container = document.getElementById('qrContainer');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const errorMsg = document.getElementById('errorMsg');
+
+  errorMsg.style.display = 'none';
+
+  if (!input) {
+    container.innerHTML = '<span class="placeholder">Enter text above and click Generate</span>';
+    downloadBtn.style.display = 'none';
+    currentQRUrl = '';
+    return;
+  }
+
+  const size = document.getElementById('qrSize').value;
+  const encoded = encodeURIComponent(input);
+  const url = `https://chart.googleapis.com/chart?chs=${size}x${size}&cht=qr&chl=${encoded}&choe=UTF-8&chld=M|0`;
+
+  currentQRUrl = url;
+  container.innerHTML = `<img src="${url}" alt="QR Code" onerror="handleQRFallback('${encoded.replace(/'/g, "\\'")}', ${size})" onload="document.getElementById('downloadBtn').style.display='inline-flex'">`;
+}
+
+function handleQRFallback(encoded, size) {
+  const container = document.getElementById('qrContainer');
+  const errorMsg = document.getElementById('errorMsg');
+
+  // Fallback: try with api.qrserver.com
+  const fallbackUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}`;
+  container.innerHTML = `<img src="${fallbackUrl}" alt="QR Code" onload="document.getElementById('downloadBtn').style.display='inline-flex'" onerror="showQRError()">`;
+  currentQRUrl = fallbackUrl;
+}
+
+function showQRError() {
+  const container = document.getElementById('qrContainer');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const errorMsg = document.getElementById('errorMsg');
+
+  container.innerHTML = '<span class="placeholder">⚠️ Failed to generate QR code</span>';
+  downloadBtn.style.display = 'none';
+  currentQRUrl = '';
+  errorMsg.textContent = 'Could not generate QR code. Check your input or try again later.';
+  errorMsg.style.display = 'block';
+}
+
+async function downloadQR() {
+  if (!currentQRUrl) return;
+
+  try {
+    const response = await fetch(currentQRUrl);
+    if (!response.ok) throw new Error('Fetch failed');
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const input = document.getElementById('qrInput').value.trim() || 'qrcode';
+    const safeName = input.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 30) || 'qrcode';
+
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = `qr-${safeName}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+  } catch (e) {
+    // Fallback: open in new tab for manual save
+    window.open(currentQRUrl, '_blank');
+  }
+}
+</script>
+</body>
+</html>

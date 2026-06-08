@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MetaTag — SEO Meta Tag Generator</title>
+<meta name="description" content="Free online SEO meta tag generator. Generate standard meta, Open Graph, and Twitter Card tags for copy-paste.">
+<style>
+:root {
+  --bg:#0d1117;
+  --surface:#161b22;
+  --border:#30363d;
+  --text:#e6edf3;
+  --dim:#8b949e;
+  --accent:#58a6ff;
+  --green:#3fb950;
+  --orange:#d2991d;
+  --radius:8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+header{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+header h1{font-size:1.1rem;display:flex;align-items:center;gap:8px}
+header nav{display:flex;gap:10px;align-items:center}
+header nav a{color:var(--dim);text-decoration:none;font-size:0.8rem}
+header nav a:hover{color:var(--text)}
+main{
+  flex:1;
+  max-width:800px;
+  width:100%;
+  margin:0 auto;
+  padding:24px 16px;
+}
+.tool-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  margin-bottom:16px;
+}
+.tool-box h2{
+  font-size:1rem;
+  margin-bottom:14px;
+  color:var(--accent);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+textarea,input[type="text"],input[type="url"]{
+  width:100%;
+  padding:10px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  color:var(--text);
+  font-family:'SF Mono',Consolas,monospace;
+  font-size:0.85rem;
+  resize:vertical;
+  outline:none;
+}
+textarea:focus,input:focus{border-color:var(--accent)}
+label{
+  display:block;
+  font-size:0.82rem;
+  color:var(--dim);
+  margin-bottom:4px;
+  margin-top:12px;
+  font-weight:500;
+}
+label:first-of-type{margin-top:0}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:10px 18px;
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:var(--radius);
+  cursor:pointer;
+  font-size:0.85rem;
+  font-weight:600;
+}
+.btn:hover{opacity:0.85}
+.btn-sm{padding:6px 12px;font-size:0.78rem}
+.btn-green{background:var(--green)}
+.btn-orange{background:var(--orange)}
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  margin:14px 0 10px;
+}
+.result-box{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+  margin-top:14px;
+  font-family:'SF Mono',Consolas,monospace;
+  font-size:0.8rem;
+  white-space:pre-wrap;
+  max-height:500px;
+  overflow-y:auto;
+  position:relative;
+  color:var(--green);
+  line-height:1.6;
+}
+.result-box .tag-name{color:var(--accent)}
+.result-box .tag-attr{color:var(--orange)}
+.result-box .tag-value{color:var(--green)}
+.result-box .tag-comment{color:var(--dim);font-style:italic}
+.ad-slot{
+  background:var(--surface);
+  border:1px dashed var(--border);
+  border-radius:var(--radius);
+  padding:14px 20px;
+  margin-bottom:16px;
+  text-align:center;
+  font-size:0.82rem;
+  color:var(--dim);
+}
+.ad-slot a{color:var(--accent);text-decoration:none}
+.ad-slot a:hover{text-decoration:underline}
+.bmc{
+  display:inline-block;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:10px 24px;
+  color:var(--orange);
+  text-decoration:none;
+  font-size:0.85rem;
+  font-weight:600;
+}
+.bmc:hover{background:var(--bg)}
+.tag-badge{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:4px;
+  font-size:0.7rem;
+  font-weight:600;
+  margin-right:6px;
+}
+.tag-badge.og{background:#1877f2;color:#fff}
+.tag-badge.tw{background:#1da1f2;color:#fff}
+.tag-badge.seo{background:var(--green);color:#000}
+.footer-bar{
+  text-align:center;
+  padding:14px;
+  font-size:0.75rem;
+  color:var(--dim);
+  border-top:1px solid var(--border);
+  background:var(--surface);
+}
+.copy-btn{
+  position:sticky;
+  top:10px;
+  float:right;
+  z-index:5;
+}
+.toast{
+  position:fixed;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--green);
+  color:#000;
+  padding:10px 24px;
+  border-radius:var(--radius);
+  font-size:0.85rem;
+  font-weight:600;
+  z-index:100;
+  opacity:0;
+  transition:opacity 0.3s;
+  pointer-events:none;
+}
+.toast.show{opacity:1}
+@media(max-width:500px){
+  header{flex-wrap:wrap;gap:8px}
+  .row{flex-direction:column}
+  .result-box{max-height:350px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏷️ MetaTag</h1>
+  <nav>
+    <a href="https://andreygorban1582-dev.github.io/keyhole/">KeyHole</a>
+    <button class="btn btn-sm" onclick="clearAll()">🗑️ Clear</button>
+  </nav>
+</header>
+
+<main>
+  <div class="ad-slot">
+    📢 Advertisement — <a href="https://a-ads.com?partner=2305445" target="_blank">Advertise here</a>
+  </div>
+
+  <div class="tool-box">
+    <h2>🔧 Generate SEO Meta Tags</h2>
+    <p style="color:var(--dim);font-size:0.82rem;margin-bottom:10px">Fill in the fields below and hit Generate to produce standard meta, Open Graph, and Twitter Card tags ready for copy-paste into your &lt;head&gt;.</p>
+
+    <label for="title">📝 Site Title</label>
+    <input type="text" id="title" placeholder="My Awesome Website">
+
+    <label for="description">📄 Description</label>
+    <textarea id="description" rows="3" placeholder="A brief description of your website (150-160 chars recommended)"></textarea>
+
+    <label for="keywords">🔑 Keywords</label>
+    <input type="text" id="keywords" placeholder="keyword1, keyword2, keyword3">
+
+    <label for="author">👤 Author</label>
+    <input type="text" id="author" placeholder="Your Name or Company">
+
+    <label for="ogImage">🖼️ OG Image URL</label>
+    <input type="url" id="ogImage" placeholder="https://example.com/og-image.jpg">
+
+    <label for="twitterHandle">🐦 Twitter Handle</label>
+    <input type="text" id="twitterHandle" placeholder="@yourhandle (without @)">
+
+    <label for="siteUrl">🌐 Site URL</label>
+    <input type="url" id="siteUrl" placeholder="https://example.com">
+
+    <div class="row">
+      <button class="btn" onclick="generate()">⚡ Generate Meta Tags</button>
+      <button class="btn btn-green btn-sm" onclick="copyOutput()">📋 Copy All</button>
+    </div>
+
+    <div class="result-box" id="output" style="display:none"></div>
+  </div>
+
+  <div style="text-align:center;margin-bottom:24px">
+    <a href="https://www.buymeacoffee.com/keyhole" class="bmc" target="_blank">☕ Buy me a coffee</a>
+  </div>
+</main>
+
+<div class="footer-bar">© 2026 MetaTag — Free online SEO meta tag generator</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+const defaults = {
+  title: 'My Awesome Website',
+  description: 'A brief description of your website for search engines and social sharing.',
+  keywords: 'keyword1, keyword2, keyword3',
+  author: 'Your Name',
+  ogImage: 'https://example.com/og-image.jpg',
+  twitterHandle: 'yourhandle',
+  siteUrl: 'https://example.com'
+};
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function generate() {
+  const title = document.getElementById('title').value.trim() || defaults.title;
+  const description = document.getElementById('description').value.trim() || defaults.description;
+  const keywords = document.getElementById('keywords').value.trim() || defaults.keywords;
+  const author = document.getElementById('author').value.trim() || defaults.author;
+  const ogImage = document.getElementById('ogImage').value.trim() || defaults.ogImage;
+  const twitterHandle = document.getElementById('twitterHandle').value.trim() || defaults.twitterHandle;
+  const siteUrl = document.getElementById('siteUrl').value.trim() || defaults.siteUrl;
+
+  const handle = twitterHandle.startsWith('@') ? twitterHandle.slice(1) : twitterHandle;
+
+  const lines = [];
+
+  lines.push('<span class="tag-comment">&lt;!-- Primary Meta Tags --&gt;</span>');
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">name</span>=<span class="tag-value">"title"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(title)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">name</span>=<span class="tag-value">"description"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(description)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">name</span>=<span class="tag-value">"keywords"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(keywords)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">name</span>=<span class="tag-value">"author"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(author)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">name</span>=<span class="tag-value">"robots"</span> <span class="tag-attr">content</span>=<span class="tag-value">"index, follow"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">name</span>=<span class="tag-value">"viewport"</span> <span class="tag-attr">content</span>=<span class="tag-value">"width=device-width, initial-scale=1.0"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">charset</span>=<span class="tag-value">"UTF-8"</span><span class="tag-name">&gt;</span>`);
+  lines.push('');
+
+  lines.push('<span class="tag-comment">&lt;!-- Open Graph / Facebook --&gt;</span>');
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:type"</span> <span class="tag-attr">content</span>=<span class="tag-value">"website"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:url"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(siteUrl)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:title"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(title)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:description"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(description)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:image"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(ogImage)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:image:width"</span> <span class="tag-attr">content</span>=<span class="tag-value">"1200"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:image:height"</span> <span class="tag-attr">content</span>=<span class="tag-value">"630"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:site_name"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(title)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"og:locale"</span> <span class="tag-attr">content</span>=<span class="tag-value">"en_US"</span><span class="tag-name">&gt;</span>`);
+  lines.push('');
+
+  lines.push('<span class="tag-comment">&lt;!-- Twitter --&gt;</span>');
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"twitter:card"</span> <span class="tag-attr">content</span>=<span class="tag-value">"summary_large_image"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"twitter:url"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(siteUrl)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"twitter:title"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(title)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"twitter:description"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(description)}"</span><span class="tag-name">&gt;</span>`);
+  lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"twitter:image"</span> <span class="tag-attr">content</span>=<span class="tag-value">"${escapeHTML(ogImage)}"</span><span class="tag-name">&gt;</span>`);
+  if (handle) {
+    lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"twitter:site"</span> <span class="tag-attr">content</span>=<span class="tag-value">"@${escapeHTML(handle)}"</span><span class="tag-name">&gt;</span>`);
+    lines.push(`<span class="tag-name">&lt;meta</span> <span class="tag-attr">property</span>=<span class="tag-value">"twitter:creator"</span> <span class="tag-attr">content</span>=<span class="tag-value">"@${escapeHTML(handle)}"</span><span class="tag-name">&gt;</span>`);
+  }
+
+  const output = document.getElementById('output');
+  output.innerHTML = lines.join('\n');
+  output.style.display = 'block';
+}
+
+function getRawText() {
+  const output = document.getElementById('output');
+  if (!output || output.style.display === 'none') return '';
+  // Extract raw text from the HTML-formatted output
+  const div = document.createElement('div');
+  div.innerHTML = output.innerHTML;
+  // Get plain text, removing HTML tags
+  let text = div.textContent || div.innerText || '';
+  return text;
+}
+
+async function copyOutput() {
+  const raw = getRawText();
+  if (!raw) return;
+  try {
+    await navigator.clipboard.writeText(raw);
+    showToast();
+  } catch(e) {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = raw;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast();
+  }
+}
+
+function clearAll() {
+  document.getElementById('title').value = '';
+  document.getElementById('description').value = '';
+  document.getElementById('keywords').value = '';
+  document.getElementById('author').value = '';
+  document.getElementById('ogImage').value = '';
+  document.getElementById('twitterHandle').value = '';
+  document.getElementById('siteUrl').value = '';
+  document.getElementById('output').style.display = 'none';
+  document.getElementById('output').innerHTML = '';
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// Generate on page load with defaults
+generate();
+</script>
+
+</body>
+</html>
