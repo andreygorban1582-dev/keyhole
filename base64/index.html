@@ -1,406 +1,408 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Base64 — Free Base64 Encoder / Decoder</title>
-<meta name="description" content="Free online Base64 encoder and decoder. Encode text to Base64 and decode Base64 back to text instantly. Real-time encoding as you type.">
-<style>
-:root {
-  --bg:#0d1117;
-  --surface:#161b22;
-  --border:#30363d;
-  --text:#e6edf3;
-  --dim:#8b949e;
-  --accent:#58a6ff;
-  --green:#3fb950;
-  --orange:#d2991d;
-  --red:#f85149;
-  --radius:8px;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-}
-header{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:14px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:10;
-}
-header h1{font-size:1.1rem;display:flex;align-items:center;gap:8px}
-header nav{display:flex;gap:10px;align-items:center}
-header nav a{color:var(--dim);text-decoration:none;font-size:0.8rem}
-header nav a:hover{color:var(--text)}
-main{
-  flex:1;
-  max-width:800px;
-  width:100%;
-  margin:0 auto;
-  padding:24px 16px;
-}
-/* ── Tabs ── */
-.tabs{
-  display:flex;
-  gap:0;
-  margin-bottom:16px;
-  border-bottom:2px solid var(--border);
-}
-.tab{
-  padding:10px 24px;
-  font-size:0.85rem;
-  font-weight:600;
-  color:var(--dim);
-  background:none;
-  border:none;
-  border-bottom:2px solid transparent;
-  margin-bottom:-2px;
-  cursor:pointer;
-  transition:color 0.15s,border-color 0.15s;
-}
-.tab:hover{color:var(--text)}
-.tab.active{
-  color:var(--accent);
-  border-bottom-color:var(--accent);
-}
-/* ── Ad Slot ── */
-.ad-slot{
-  background:var(--surface);
-  border:1px dashed var(--border);
-  border-radius:var(--radius);
-  padding:12px;
-  text-align:center;
-  font-size:0.78rem;
-  color:var(--dim);
-  margin-bottom:16px;
-}
-.ad-slot a{color:var(--accent)}
-/* ── Tool Box ── */
-.tool-box{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:20px;
-  margin-bottom:16px;
-}
-textarea{
-  width:100%;
-  padding:12px;
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  color:var(--text);
-  font-family:'SF Mono',Consolas,monospace;
-  font-size:0.85rem;
-  outline:none;
-  line-height:1.5;
-  transition:border-color 0.15s;
-}
-textarea:focus{border-color:var(--accent)}
-#inputText{min-height:160px;resize:vertical}
-#outputText{min-height:160px;max-height:400px;resize:none}
-.label-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:6px;
-}
-.label-row span{
-  font-size:0.78rem;
-  color:var(--dim);
-  font-weight:500;
-}
-/* ── Buttons ── */
-.btn{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:10px 18px;
-  background:var(--accent);
-  color:#fff;
-  border:none;
-  border-radius:var(--radius);
-  cursor:pointer;
-  font-size:0.85rem;
-  font-weight:600;
-  transition:opacity 0.15s;
-}
-.btn:hover{opacity:0.85}
-.btn-sm{padding:6px 12px;font-size:0.78rem}
-.btn-green{background:var(--green)}
-.btn-orange{background:var(--orange)}
-.btn-outline{
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--text);
-}
-.btn-outline:hover{background:var(--surface)}
-.row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-  margin:12px 0;
-}
-.output-section{margin-top:16px}
-/* ── Status ── */
-.status{
-  font-size:0.78rem;
-  color:var(--dim);
-  margin-top:6px;
-  min-height:1.2em;
-}
-.status.error{color:var(--red)}
-.status.success{color:var(--green)}
-/* ── Toast ── */
-.toast{
-  position:fixed;
-  bottom:30px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--green);
-  color:#fff;
-  padding:10px 24px;
-  border-radius:var(--radius);
-  font-size:0.85rem;
-  font-weight:600;
-  z-index:100;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 0.3s;
-}
-.toast.show{opacity:1}
-/* ── BMC ── */
-.bmc{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:10px 18px;
-  background:#ff813f;
-  color:#fff;
-  text-decoration:none;
-  border-radius:var(--radius);
-  font-size:0.85rem;
-  font-weight:600;
-  transition:opacity 0.15s;
-}
-.bmc:hover{opacity:0.85}
-.bmc-section{text-align:center;margin-bottom:16px}
-/* ── Footer ── */
-.footer-bar{
-  text-align:center;
-  padding:14px;
-  font-size:0.75rem;
-  color:var(--dim);
-  border-top:1px solid var(--border);
-  background:var(--surface);
-}
-/* ── Responsive ── */
-@media(max-width:500px){
-  header{flex-wrap:wrap;gap:8px}
-  .row{flex-direction:column}
-  .tab{padding:10px 16px}
-}
-</style>
+1|<!DOCTYPE html>
+2|<html lang="en">
+3|<head>
+4|<meta charset="UTF-8">
+5|<meta name="viewport" content="width=device-width,initial-scale=1.0">
+6|<title>Base64 — Free Base64 Encoder / Decoder</title>
+7|<meta name="description" content="Free online Base64 encoder and decoder. Encode text to Base64 and decode Base64 back to text instantly. Real-time encoding as you type.">
+8|<style>
+9|:root {
+10|  --bg:#0d1117;
+11|  --surface:#161b22;
+12|  --border:#30363d;
+13|  --text:#e6edf3;
+14|  --dim:#8b949e;
+15|  --accent:#58a6ff;
+16|  --green:#3fb950;
+17|  --orange:#d2991d;
+18|  --red:#f85149;
+19|  --radius:8px;
+20|}
+21|*{margin:0;padding:0;box-sizing:border-box}
+22|body{
+23|  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+24|  background:var(--bg);
+25|  color:var(--text);
+26|  min-height:100vh;
+27|  display:flex;
+28|  flex-direction:column;
+29|}
+30|header{
+31|  background:var(--surface);
+32|  border-bottom:1px solid var(--border);
+33|  padding:14px 20px;
+34|  display:flex;
+35|  align-items:center;
+36|  justify-content:space-between;
+37|  position:sticky;
+38|  top:0;
+39|  z-index:10;
+40|}
+41|header h1{font-size:1.1rem;display:flex;align-items:center;gap:8px}
+42|header nav{display:flex;gap:10px;align-items:center}
+43|header nav a{color:var(--dim);text-decoration:none;font-size:0.8rem}
+44|header nav a:hover{color:var(--text)}
+45|main{
+46|  flex:1;
+47|  max-width:800px;
+48|  width:100%;
+49|  margin:0 auto;
+50|  padding:24px 16px;
+51|}
+52|/* ── Tabs ── */
+53|.tabs{
+54|  display:flex;
+55|  gap:0;
+56|  margin-bottom:16px;
+57|  border-bottom:2px solid var(--border);
+58|}
+59|.tab{
+60|  padding:10px 24px;
+61|  font-size:0.85rem;
+62|  font-weight:600;
+63|  color:var(--dim);
+64|  background:none;
+65|  border:none;
+66|  border-bottom:2px solid transparent;
+67|  margin-bottom:-2px;
+68|  cursor:pointer;
+69|  transition:color 0.15s,border-color 0.15s;
+70|}
+71|.tab:hover{color:var(--text)}
+72|.tab.active{
+73|  color:var(--accent);
+74|  border-bottom-color:var(--accent);
+75|}
+76|/* ── Ad Slot ── */
+77|.ad-slot{
+78|  background:var(--surface);
+79|  border:1px dashed var(--border);
+80|  border-radius:var(--radius);
+81|  padding:12px;
+82|  text-align:center;
+83|  font-size:0.78rem;
+84|  color:var(--dim);
+85|  margin-bottom:16px;
+86|}
+87|.ad-slot a{color:var(--accent)}
+88|/* ── Tool Box ── */
+89|.tool-box{
+90|  background:var(--surface);
+91|  border:1px solid var(--border);
+92|  border-radius:var(--radius);
+93|  padding:20px;
+94|  margin-bottom:16px;
+95|}
+96|textarea{
+97|  width:100%;
+98|  padding:12px;
+99|  background:var(--bg);
+100|  border:1px solid var(--border);
+101|  border-radius:var(--radius);
+102|  color:var(--text);
+103|  font-family:'SF Mono',Consolas,monospace;
+104|  font-size:0.85rem;
+105|  outline:none;
+106|  line-height:1.5;
+107|  transition:border-color 0.15s;
+108|}
+109|textarea:focus{border-color:var(--accent)}
+110|#inputText{min-height:160px;resize:vertical}
+111|#outputText{min-height:160px;max-height:400px;resize:none}
+112|.label-row{
+113|  display:flex;
+114|  justify-content:space-between;
+115|  align-items:center;
+116|  margin-bottom:6px;
+117|}
+118|.label-row span{
+119|  font-size:0.78rem;
+120|  color:var(--dim);
+121|  font-weight:500;
+122|}
+123|/* ── Buttons ── */
+124|.btn{
+125|  display:inline-flex;
+126|  align-items:center;
+127|  gap:6px;
+128|  padding:10px 18px;
+129|  background:var(--accent);
+130|  color:#fff;
+131|  border:none;
+132|  border-radius:var(--radius);
+133|  cursor:pointer;
+134|  font-size:0.85rem;
+135|  font-weight:600;
+136|  transition:opacity 0.15s;
+137|}
+138|.btn:hover{opacity:0.85}
+139|.btn-sm{padding:6px 12px;font-size:0.78rem}
+140|.btn-green{background:var(--green)}
+141|.btn-orange{background:var(--orange)}
+142|.btn-outline{
+143|  background:transparent;
+144|  border:1px solid var(--border);
+145|  color:var(--text);
+146|}
+147|.btn-outline:hover{background:var(--surface)}
+148|.row{
+149|  display:flex;
+150|  gap:10px;
+151|  flex-wrap:wrap;
+152|  align-items:center;
+153|  margin:12px 0;
+154|}
+155|.output-section{margin-top:16px}
+156|/* ── Status ── */
+157|.status{
+158|  font-size:0.78rem;
+159|  color:var(--dim);
+160|  margin-top:6px;
+161|  min-height:1.2em;
+162|}
+163|.status.error{color:var(--red)}
+164|.status.success{color:var(--green)}
+165|/* ── Toast ── */
+166|.toast{
+167|  position:fixed;
+168|  bottom:30px;
+169|  left:50%;
+170|  transform:translateX(-50%);
+171|  background:var(--green);
+172|  color:#fff;
+173|  padding:10px 24px;
+174|  border-radius:var(--radius);
+175|  font-size:0.85rem;
+176|  font-weight:600;
+177|  z-index:100;
+178|  opacity:0;
+179|  pointer-events:none;
+180|  transition:opacity 0.3s;
+181|}
+182|.toast.show{opacity:1}
+183|/* ── BMC ── */
+184|.bmc{
+185|  display:inline-flex;
+186|  align-items:center;
+187|  gap:6px;
+188|  padding:10px 18px;
+189|  background:#ff813f;
+190|  color:#fff;
+191|  text-decoration:none;
+192|  border-radius:var(--radius);
+193|  font-size:0.85rem;
+194|  font-weight:600;
+195|  transition:opacity 0.15s;
+196|}
+197|.bmc:hover{opacity:0.85}
+198|.bmc-section{text-align:center;margin-bottom:16px}
+199|/* ── Footer ── */
+200|.footer-bar{
+201|  text-align:center;
+202|  padding:14px;
+203|  font-size:0.75rem;
+204|  color:var(--dim);
+205|  border-top:1px solid var(--border);
+206|  background:var(--surface);
+207|}
+208|/* ── Responsive ── */
+209|@media(max-width:500px){
+210|  header{flex-wrap:wrap;gap:8px}
+211|  .row{flex-direction:column}
+212|  .tab{padding:10px 16px}
+213|}
+214|</style>
+215|<script data-cfasync="false" async src="https://a-ads.com/scripts/ads.js" id="_aads_js"></script>
 </head>
-<body>
-
-<header>
-  <h1>🔤 Base64</h1>
-  <nav>
-    <a href="https://andreygorban1582-dev.github.io/keyhole/">KeyHole</a>
-  </nav>
-</header>
-
-<main>
-  <div class="ad-slot">
-    📢 Advertisement — <a href="https://a-ads.com?partner=2305445">Advertise here</a>
-  </div>
-
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" id="tabEncode" onclick="switchTab('encode')">🔒 Encode</button>
-    <button class="tab" id="tabDecode" onclick="switchTab('decode')">🔓 Decode</button>
-  </div>
-
-  <!-- Input -->
-  <div class="tool-box">
-    <div class="label-row">
-      <span id="inputLabel">📝 Text to encode</span>
-      <span id="inputStats" style="font-size:0.72rem"></span>
-    </div>
-    <textarea id="inputText" placeholder="Type or paste text here…" spellcheck="false"></textarea>
-
-    <div class="row">
-      <button class="btn" id="actionBtn" onclick="process()">🔒 Encode</button>
-      <button class="btn btn-green" onclick="copyOutput()">📋 Copy Output</button>
-      <button class="btn btn-sm btn-outline" onclick="clearAll()">🗑 Clear</button>
-    </div>
-
-    <!-- Output -->
-    <div class="output-section">
-      <div class="label-row">
-        <span id="outputLabel">📄 Base64 output</span>
-      </div>
-      <textarea id="outputText" placeholder="Result appears here…" readonly spellcheck="false"></textarea>
-      <div class="status" id="statusMsg"></div>
-    </div>
-  </div>
-
-  <!-- BMC -->
-  <div class="bmc-section">
-    <a href="https://www.buymeacoffee.com/keyhole" class="bmc" target="_blank">☕ Buy me a coffee</a>
-  </div>
-</main>
-
-<div class="footer-bar">© 2026 Base64 — Free online Base64 encoder &amp; decoder</div>
-
-<div class="toast" id="toast">✅ Copied!</div>
-
-<script>
-var currentTab = 'encode';
-var debounceTimer = null;
-
-/* ── Tab switching ── */
-function switchTab(tab) {
-  currentTab = tab;
-  document.getElementById('tabEncode').classList.toggle('active', tab === 'encode');
-  document.getElementById('tabDecode').classList.toggle('active', tab === 'decode');
-
-  if (tab === 'encode') {
-    document.getElementById('inputLabel').textContent = '📝 Text to encode';
-    document.getElementById('outputLabel').textContent = '📄 Base64 output';
-    document.getElementById('actionBtn').innerHTML = '🔒 Encode';
-    document.getElementById('inputText').placeholder = 'Type or paste text here…';
-  } else {
-    document.getElementById('inputLabel').textContent = '📝 Base64 to decode';
-    document.getElementById('outputLabel').textContent = '📄 Decoded text';
-    document.getElementById('actionBtn').innerHTML = '🔓 Decode';
-    document.getElementById('inputText').placeholder = 'Paste Base64-encoded text here…';
-  }
-
-  // Re-run for real-time
-  process();
-}
-
-/* ── Process ── */
-function process() {
-  var input = document.getElementById('inputText').value;
-  var output = document.getElementById('outputText');
-  var status = document.getElementById('statusMsg');
-  var stats = document.getElementById('inputStats');
-
-  // Update stats
-  if (input.length === 0) {
-    stats.textContent = '';
-  } else {
-    var bytes = new Blob([input]).size;
-    stats.textContent = bytes.toLocaleString() + ' bytes · ' + input.length.toLocaleString() + ' chars';
-  }
-
-  if (!input) {
-    output.value = '';
-    status.textContent = '';
-    status.className = 'status';
-    return;
-  }
-
-  if (currentTab === 'encode') {
-    try {
-      var encoded = btoa(unescape(encodeURIComponent(input)));
-      output.value = encoded;
-      status.textContent = '✓ Encoded — ' + encoded.length.toLocaleString() + ' chars';
-      status.className = 'status success';
-    } catch (e) {
-      // Fallback for strings that fail encodeURIComponent
-      try {
-        var encoded = btoa(input);
-        output.value = encoded;
-        status.textContent = '✓ Encoded (ASCII only) — ' + encoded.length.toLocaleString() + ' chars';
-        status.className = 'status success';
-      } catch (e2) {
-        output.value = '';
-        status.textContent = '✗ Encoding failed: ' + e2.message;
-        status.className = 'status error';
-      }
-    }
-  } else {
-    try {
-      var decoded = decodeURIComponent(escape(atob(input)));
-      output.value = decoded;
-      status.textContent = '✓ Decoded — ' + decoded.length.toLocaleString() + ' chars';
-      status.className = 'status success';
-    } catch (e) {
-      // Maybe it's ASCII-only base64
-      try {
-        var decoded = atob(input);
-        output.value = decoded;
-        status.textContent = '✓ Decoded (ASCII) — ' + decoded.length.toLocaleString() + ' chars';
-        status.className = 'status success';
-      } catch (e2) {
-        output.value = '';
-        status.textContent = '✗ Invalid Base64: ' + e2.message;
-        status.className = 'status error';
-      }
-    }
-  }
-}
-
-/* ── Copy ── */
-function copyOutput() {
-  var text = document.getElementById('outputText').value;
-  if (!text) {
-    showToast('⚠ Nothing to copy');
-    return;
-  }
-  navigator.clipboard.writeText(text).then(function() {
-    showToast('✅ Copied!');
-  }).catch(function() {
-    // Fallback
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.left = '-9999px';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('✅ Copied!');
-  });
-}
-
-function showToast(msg) {
-  var toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(function() { toast.classList.remove('show'); }, 1800);
-}
-
-/* ── Clear ── */
-function clearAll() {
-  document.getElementById('inputText').value = '';
-  document.getElementById('outputText').value = '';
-  document.getElementById('statusMsg').textContent = '';
-  document.getElementById('statusMsg').className = 'status';
-  document.getElementById('inputStats').textContent = '';
-}
-
-/* ── Real-time encoding on input ── */
-document.getElementById('inputText').addEventListener('input', function() {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(process, 150);
-});
-</script>
-
-</body>
-</html>
+216|<body>
+217|
+218|<header>
+219|  <h1>🔤 Base64</h1>
+220|  <nav>
+221|    <a href="https://andreygorban1582-dev.github.io/keyhole/">KeyHole</a>
+222|  </nav>
+223|</header>
+224|
+225|<main>
+226|  <div class="ad-slot">
+227|    📢 Advertisement — <a href="https://a-ads.com?partner=2305445">Advertise here</a>
+228|  </div>
+229|
+230|  <!-- Tabs -->
+231|  <div class="tabs">
+232|    <button class="tab active" id="tabEncode" onclick="switchTab('encode')">🔒 Encode</button>
+233|    <button class="tab" id="tabDecode" onclick="switchTab('decode')">🔓 Decode</button>
+234|  </div>
+235|
+236|  <!-- Input -->
+237|  <div class="tool-box">
+238|    <div class="label-row">
+239|      <span id="inputLabel">📝 Text to encode</span>
+240|      <span id="inputStats" style="font-size:0.72rem"></span>
+241|    </div>
+242|    <textarea id="inputText" placeholder="Type or paste text here…" spellcheck="false"></textarea>
+243|
+244|    <div class="row">
+245|      <button class="btn" id="actionBtn" onclick="process()">🔒 Encode</button>
+246|      <button class="btn btn-green" onclick="copyOutput()">📋 Copy Output</button>
+247|      <button class="btn btn-sm btn-outline" onclick="clearAll()">🗑 Clear</button>
+248|    </div>
+249|
+250|    <!-- Output -->
+251|    <div class="output-section">
+252|      <div class="label-row">
+253|        <span id="outputLabel">📄 Base64 output</span>
+254|      </div>
+255|      <textarea id="outputText" placeholder="Result appears here…" readonly spellcheck="false"></textarea>
+256|      <div class="status" id="statusMsg"></div>
+257|    </div>
+258|  </div>
+259|
+260|  <!-- BMC -->
+261|  <div class="bmc-section">
+262|    <a href="https://www.buymeacoffee.com/keyhole" class="bmc" target="_blank">☕ Buy me a coffee</a>
+263|  </div>
+264|</main>
+265|
+266|<div class="footer-bar">© 2026 Base64 — Free online Base64 encoder &amp; decoder</div>
+267|
+268|<div class="toast" id="toast">✅ Copied!</div>
+269|
+270|<script>
+271|var currentTab = 'encode';
+272|var debounceTimer = null;
+273|
+274|/* ── Tab switching ── */
+275|function switchTab(tab) {
+276|  currentTab = tab;
+277|  document.getElementById('tabEncode').classList.toggle('active', tab === 'encode');
+278|  document.getElementById('tabDecode').classList.toggle('active', tab === 'decode');
+279|
+280|  if (tab === 'encode') {
+281|    document.getElementById('inputLabel').textContent = '📝 Text to encode';
+282|    document.getElementById('outputLabel').textContent = '📄 Base64 output';
+283|    document.getElementById('actionBtn').innerHTML = '🔒 Encode';
+284|    document.getElementById('inputText').placeholder = 'Type or paste text here…';
+285|  } else {
+286|    document.getElementById('inputLabel').textContent = '📝 Base64 to decode';
+287|    document.getElementById('outputLabel').textContent = '📄 Decoded text';
+288|    document.getElementById('actionBtn').innerHTML = '🔓 Decode';
+289|    document.getElementById('inputText').placeholder = 'Paste Base64-encoded text here…';
+290|  }
+291|
+292|  // Re-run for real-time
+293|  process();
+294|}
+295|
+296|/* ── Process ── */
+297|function process() {
+298|  var input = document.getElementById('inputText').value;
+299|  var output = document.getElementById('outputText');
+300|  var status = document.getElementById('statusMsg');
+301|  var stats = document.getElementById('inputStats');
+302|
+303|  // Update stats
+304|  if (input.length === 0) {
+305|    stats.textContent = '';
+306|  } else {
+307|    var bytes = new Blob([input]).size;
+308|    stats.textContent = bytes.toLocaleString() + ' bytes · ' + input.length.toLocaleString() + ' chars';
+309|  }
+310|
+311|  if (!input) {
+312|    output.value = '';
+313|    status.textContent = '';
+314|    status.className = 'status';
+315|    return;
+316|  }
+317|
+318|  if (currentTab === 'encode') {
+319|    try {
+320|      var encoded = btoa(unescape(encodeURIComponent(input)));
+321|      output.value = encoded;
+322|      status.textContent = '✓ Encoded — ' + encoded.length.toLocaleString() + ' chars';
+323|      status.className = 'status success';
+324|    } catch (e) {
+325|      // Fallback for strings that fail encodeURIComponent
+326|      try {
+327|        var encoded = btoa(input);
+328|        output.value = encoded;
+329|        status.textContent = '✓ Encoded (ASCII only) — ' + encoded.length.toLocaleString() + ' chars';
+330|        status.className = 'status success';
+331|      } catch (e2) {
+332|        output.value = '';
+333|        status.textContent = '✗ Encoding failed: ' + e2.message;
+334|        status.className = 'status error';
+335|      }
+336|    }
+337|  } else {
+338|    try {
+339|      var decoded = decodeURIComponent(escape(atob(input)));
+340|      output.value = decoded;
+341|      status.textContent = '✓ Decoded — ' + decoded.length.toLocaleString() + ' chars';
+342|      status.className = 'status success';
+343|    } catch (e) {
+344|      // Maybe it's ASCII-only base64
+345|      try {
+346|        var decoded = atob(input);
+347|        output.value = decoded;
+348|        status.textContent = '✓ Decoded (ASCII) — ' + decoded.length.toLocaleString() + ' chars';
+349|        status.className = 'status success';
+350|      } catch (e2) {
+351|        output.value = '';
+352|        status.textContent = '✗ Invalid Base64: ' + e2.message;
+353|        status.className = 'status error';
+354|      }
+355|    }
+356|  }
+357|}
+358|
+359|/* ── Copy ── */
+360|function copyOutput() {
+361|  var text = document.getElementById('outputText').value;
+362|  if (!text) {
+363|    showToast('⚠ Nothing to copy');
+364|    return;
+365|  }
+366|  navigator.clipboard.writeText(text).then(function() {
+367|    showToast('✅ Copied!');
+368|  }).catch(function() {
+369|    // Fallback
+370|    var ta = document.createElement('textarea');
+371|    ta.value = text;
+372|    ta.style.position = 'fixed';
+373|    ta.style.left = '-9999px';
+374|    document.body.appendChild(ta);
+375|    ta.select();
+376|    document.execCommand('copy');
+377|    document.body.removeChild(ta);
+378|    showToast('✅ Copied!');
+379|  });
+380|}
+381|
+382|function showToast(msg) {
+383|  var toast = document.getElementById('toast');
+384|  toast.textContent = msg;
+385|  toast.classList.add('show');
+386|  setTimeout(function() { toast.classList.remove('show'); }, 1800);
+387|}
+388|
+389|/* ── Clear ── */
+390|function clearAll() {
+391|  document.getElementById('inputText').value = '';
+392|  document.getElementById('outputText').value = '';
+393|  document.getElementById('statusMsg').textContent = '';
+394|  document.getElementById('statusMsg').className = 'status';
+395|  document.getElementById('inputStats').textContent = '';
+396|}
+397|
+398|/* ── Real-time encoding on input ── */
+399|document.getElementById('inputText').addEventListener('input', function() {
+400|  clearTimeout(debounceTimer);
+401|  debounceTimer = setTimeout(process, 150);
+402|});
+403|</script>
+404|
+405|</body>
+406|</html>
+407|

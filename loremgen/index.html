@@ -1,342 +1,344 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>LoremGen — Lorem Ipsum Generator</title>
-<meta name="description" content="Free online Lorem Ipsum text generator. Generate placeholder paragraphs, sentences, or words.">
-<style>
-:root{
-  --bg:#0d1117;
-  --surface:#161b22;
-  --border:#30363d;
-  --text:#e6edf3;
-  --dim:#8b949e;
-  --accent:#58a6ff;
-  --green:#3fb950;
-  --orange:#d2991d;
-  --radius:8px
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;flex-direction:column
-}
-header{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:14px 20px;
-  display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:10
-}
-header h1{font-size:1.1rem;display:flex;align-items:center;gap:8px}
-header nav{display:flex;gap:10px;align-items:center}
-header nav a{color:var(--dim);text-decoration:none;font-size:0.8rem}
-header nav a:hover{color:var(--text)}
-main{
-  flex:1;
-  max-width:800px;width:100%;
-  margin:0 auto;padding:24px 16px
-}
-.ad-slot{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:14px 16px;
-  margin-bottom:16px;
-  text-align:center;
-  color:var(--dim);
-  font-size:0.82rem
-}
-.ad-slot a{color:var(--accent);text-decoration:none}
-.ad-slot a:hover{text-decoration:underline}
-.tool-box{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:20px;
-  margin-bottom:16px
-}
-.tool-box h2{
-  font-size:1rem;
-  margin-bottom:14px;
-  color:var(--accent);
-  display:flex;align-items:center;gap:6px
-}
-.controls{
-  display:flex;gap:12px;
-  flex-wrap:wrap;align-items:flex-end;
-  margin-bottom:16px
-}
-.control-group{
-  display:flex;flex-direction:column;gap:6px
-}
-.control-group label{
-  font-size:0.78rem;
-  color:var(--dim);
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:0.5px
-}
-select,input[type="number"]{
-  padding:10px 12px;
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  color:var(--text);
-  font-family:'SF Mono',Consolas,monospace;
-  font-size:0.85rem;
-  outline:none;
-  min-width:140px;
-  cursor:pointer
-}
-select:focus,input[type="number"]:focus{
-  border-color:var(--accent)
-}
-.btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:10px 18px;
-  background:var(--accent);
-  color:#fff;
-  border:none;border-radius:var(--radius);
-  cursor:pointer;
-  font-size:0.85rem;font-weight:600;
-  white-space:nowrap
-}
-.btn:hover{opacity:0.85}
-.btn-sm{padding:6px 12px;font-size:0.78rem}
-.btn-green{background:var(--green)}
-.output-area{
-  position:relative
-}
-textarea.output{
-  width:100%;
-  padding:14px;
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  color:var(--text);
-  font-family:'SF Mono',Consolas,monospace;
-  font-size:0.85rem;
-  resize:vertical;
-  outline:none;
-  min-height:200px;
-  line-height:1.6
-}
-textarea.output:focus{border-color:var(--accent)}
-.output-actions{
-  display:flex;gap:8px;
-  justify-content:flex-end;
-  margin-top:10px
-}
-.bmc-row{
-  text-align:center;
-  margin-top:12px
-}
-.bmc{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:10px 18px;
-  background:var(--orange);
-  color:#fff;
-  text-decoration:none;
-  border-radius:var(--radius);
-  font-size:0.85rem;font-weight:600
-}
-.bmc:hover{opacity:0.85}
-.footer-bar{
-  text-align:center;
-  padding:14px 20px;
-  color:var(--dim);
-  font-size:0.75rem;
-  border-top:1px solid var(--border);
-  background:var(--surface)
-}
-.info-row{
-  display:flex;gap:8px;flex-wrap:wrap;
-  margin-top:10px;
-  font-size:0.75rem;color:var(--dim)
-}
-.info-row span{
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:4px;
-  padding:3px 8px
-}
-</style>
+1|<!DOCTYPE html>
+2|<html lang="en">
+3|<head>
+4|<meta charset="UTF-8">
+5|<meta name="viewport" content="width=device-width,initial-scale=1.0">
+6|<title>LoremGen — Lorem Ipsum Generator</title>
+7|<meta name="description" content="Free online Lorem Ipsum text generator. Generate placeholder paragraphs, sentences, or words.">
+8|<style>
+9|:root{
+10|  --bg:#0d1117;
+11|  --surface:#161b22;
+12|  --border:#30363d;
+13|  --text:#e6edf3;
+14|  --dim:#8b949e;
+15|  --accent:#58a6ff;
+16|  --green:#3fb950;
+17|  --orange:#d2991d;
+18|  --radius:8px
+19|}
+20|*{margin:0;padding:0;box-sizing:border-box}
+21|body{
+22|  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+23|  background:var(--bg);
+24|  color:var(--text);
+25|  min-height:100vh;
+26|  display:flex;flex-direction:column
+27|}
+28|header{
+29|  background:var(--surface);
+30|  border-bottom:1px solid var(--border);
+31|  padding:14px 20px;
+32|  display:flex;align-items:center;justify-content:space-between;
+33|  position:sticky;top:0;z-index:10
+34|}
+35|header h1{font-size:1.1rem;display:flex;align-items:center;gap:8px}
+36|header nav{display:flex;gap:10px;align-items:center}
+37|header nav a{color:var(--dim);text-decoration:none;font-size:0.8rem}
+38|header nav a:hover{color:var(--text)}
+39|main{
+40|  flex:1;
+41|  max-width:800px;width:100%;
+42|  margin:0 auto;padding:24px 16px
+43|}
+44|.ad-slot{
+45|  background:var(--surface);
+46|  border:1px solid var(--border);
+47|  border-radius:var(--radius);
+48|  padding:14px 16px;
+49|  margin-bottom:16px;
+50|  text-align:center;
+51|  color:var(--dim);
+52|  font-size:0.82rem
+53|}
+54|.ad-slot a{color:var(--accent);text-decoration:none}
+55|.ad-slot a:hover{text-decoration:underline}
+56|.tool-box{
+57|  background:var(--surface);
+58|  border:1px solid var(--border);
+59|  border-radius:var(--radius);
+60|  padding:20px;
+61|  margin-bottom:16px
+62|}
+63|.tool-box h2{
+64|  font-size:1rem;
+65|  margin-bottom:14px;
+66|  color:var(--accent);
+67|  display:flex;align-items:center;gap:6px
+68|}
+69|.controls{
+70|  display:flex;gap:12px;
+71|  flex-wrap:wrap;align-items:flex-end;
+72|  margin-bottom:16px
+73|}
+74|.control-group{
+75|  display:flex;flex-direction:column;gap:6px
+76|}
+77|.control-group label{
+78|  font-size:0.78rem;
+79|  color:var(--dim);
+80|  font-weight:600;
+81|  text-transform:uppercase;
+82|  letter-spacing:0.5px
+83|}
+84|select,input[type="number"]{
+85|  padding:10px 12px;
+86|  background:var(--bg);
+87|  border:1px solid var(--border);
+88|  border-radius:var(--radius);
+89|  color:var(--text);
+90|  font-family:'SF Mono',Consolas,monospace;
+91|  font-size:0.85rem;
+92|  outline:none;
+93|  min-width:140px;
+94|  cursor:pointer
+95|}
+96|select:focus,input[type="number"]:focus{
+97|  border-color:var(--accent)
+98|}
+99|.btn{
+100|  display:inline-flex;align-items:center;gap:6px;
+101|  padding:10px 18px;
+102|  background:var(--accent);
+103|  color:#fff;
+104|  border:none;border-radius:var(--radius);
+105|  cursor:pointer;
+106|  font-size:0.85rem;font-weight:600;
+107|  white-space:nowrap
+108|}
+109|.btn:hover{opacity:0.85}
+110|.btn-sm{padding:6px 12px;font-size:0.78rem}
+111|.btn-green{background:var(--green)}
+112|.output-area{
+113|  position:relative
+114|}
+115|textarea.output{
+116|  width:100%;
+117|  padding:14px;
+118|  background:var(--bg);
+119|  border:1px solid var(--border);
+120|  border-radius:var(--radius);
+121|  color:var(--text);
+122|  font-family:'SF Mono',Consolas,monospace;
+123|  font-size:0.85rem;
+124|  resize:vertical;
+125|  outline:none;
+126|  min-height:200px;
+127|  line-height:1.6
+128|}
+129|textarea.output:focus{border-color:var(--accent)}
+130|.output-actions{
+131|  display:flex;gap:8px;
+132|  justify-content:flex-end;
+133|  margin-top:10px
+134|}
+135|.bmc-row{
+136|  text-align:center;
+137|  margin-top:12px
+138|}
+139|.bmc{
+140|  display:inline-flex;align-items:center;gap:6px;
+141|  padding:10px 18px;
+142|  background:var(--orange);
+143|  color:#fff;
+144|  text-decoration:none;
+145|  border-radius:var(--radius);
+146|  font-size:0.85rem;font-weight:600
+147|}
+148|.bmc:hover{opacity:0.85}
+149|.footer-bar{
+150|  text-align:center;
+151|  padding:14px 20px;
+152|  color:var(--dim);
+153|  font-size:0.75rem;
+154|  border-top:1px solid var(--border);
+155|  background:var(--surface)
+156|}
+157|.info-row{
+158|  display:flex;gap:8px;flex-wrap:wrap;
+159|  margin-top:10px;
+160|  font-size:0.75rem;color:var(--dim)
+161|}
+162|.info-row span{
+163|  background:var(--bg);
+164|  border:1px solid var(--border);
+165|  border-radius:4px;
+166|  padding:3px 8px
+167|}
+168|</style>
+169|<script data-cfasync="false" async src="https://a-ads.com/scripts/ads.js" id="_aads_js"></script>
 </head>
-<body>
-
-<header>
-  <h1>📝 LoremGen</h1>
-  <nav>
-    <a href="https://andreygorban1582-dev.github.io/keyhole/">KeyHole</a>
-    <button class="btn btn-sm" onclick="copyOutput()">📋 Copy</button>
-  </nav>
-</header>
-
-<main>
-  <div class="ad-slot">
-    📢 Advertisement — <a href="https://a-ads.com?partner=2305445">Advertise here</a>
-  </div>
-
-  <div class="tool-box">
-    <h2>⚡ Generate Lorem Ipsum</h2>
-
-    <div class="controls">
-      <div class="control-group">
-        <label for="mode">Mode</label>
-        <select id="mode">
-          <option value="paragraphs">Paragraphs</option>
-          <option value="sentences">Sentences</option>
-          <option value="words">Words</option>
-        </select>
-      </div>
-      <div class="control-group">
-        <label for="count">Count</label>
-        <input type="number" id="count" value="3" min="1" max="20">
-      </div>
-      <div class="control-group" style="justify-content:flex-end">
-        <button class="btn" onclick="generate()">⚡ Generate</button>
-      </div>
-    </div>
-
-    <div class="output-area">
-      <textarea class="output" id="output" readonly placeholder="Your lorem ipsum will appear here..."></textarea>
-      <div class="output-actions">
-        <button class="btn btn-sm btn-green" onclick="copyOutput()">📋 Copy to Clipboard</button>
-      </div>
-    </div>
-
-    <div class="info-row" id="stats"></div>
-  </div>
-
-  <div class="bmc-row">
-    <a href="https://www.buymeacoffee.com/keyhole" class="bmc" target="_blank">☕ Buy me a coffee</a>
-  </div>
-</main>
-
-<div class="footer-bar">© 2026 LoremGen — Free online Lorem Ipsum text generator</div>
-
-<script>
-// ── Lorem Ipsum word pool ──
-const WORDS = [
-  "lorem","ipsum","dolor","sit","amet","consectetur","adipiscing","elit",
-  "sed","do","eiusmod","tempor","incididunt","ut","labore","et","dolore",
-  "magna","aliqua","enim","ad","minim","veniam","quis","nostrud",
-  "exercitation","ullamco","laboris","nisi","ut","aliquip","ex","ea",
-  "commodo","consequat","duis","aute","irure","dolor","in",
-  "reprehenderit","in","voluptate","velit","esse","cillum","dolore","eu",
-  "fugiat","nulla","pariatur","excepteur","sint","occaecat","cupidatat",
-  "non","proident","sunt","in","culpa","qui","officia","deserunt",
-  "mollit","anim","id","est","laborum","praesent","sapien","massa",
-  "convallis","a","pellentesque","nec","egestas","non","nisi","aliquam",
-  "nulla","sit","amet","est","placerat","in","egestas","erat",
-  "imperdiet","sed","euismod","nisi","porta","lorem","mollis","aliquet",
-  "ut","porttitor","leo","a","diam","sollicitudin","tempor","id","eu",
-  "nisl","nunc","mi","ipsum","faucibus","vitae","aliquet","nec",
-  "ullamcorper","sit","amet","risus","nullam","eget","felis","eget",
-  "nunc","lobortis","mattis","aliquam","faucibus","purus","in","massa",
-  "tempor","nec","feugiat","nisl","pretium","fusce","id","velit","ut",
-  "tortor","pretium","viverra","suspendisse","potenti","nullam","ac",
-  "tortor","vitae","purus","faucibus","ornare","suspendisse","sed","nisi",
-  "lacus","sed","viverra","tellus","in","hac","habitasse","platea",
-  "dictumst","vestibulum","rhoncus","est","pellentesque","elit",
-  "ullamcorper","dignissim","cras","tincidunt","lobortis","feugiat",
-  "vivamus","at","augue","eget","arcu","dictum","varius","duis","at",
-  "consectetur","lorem","donec","massa","sapien","faucibus","et",
-  "molestie","ac","feugiat","sed","lectus","vestibulum","mattis",
-  "ullamcorper","velit","sed","ullamcorper","morbi","tincidunt","ornare",
-  "massa","eget","egestas","purus","viverra","accumsan","in","nisl",
-  "nisi","scelerisque","eu","ultrices","vitae","auctor","eu","augue",
-  "ut","lectus","arcu","bibendum","at","varius","vel","pharetra","vel",
-  "turpis","nunc","eget","lorem","dolor","sed","viverra","ipsum","nunc",
-  "aliquet","bibendum","enim","facilisis","gravida","neque","convallis",
-  "a","cras","semper","auctor","neque","vitae","tempus","quam",
-  "pellentesque","nec","nam","aliquam","sem","et","tortor","consequat"
-];
-
-// ── Helpers ──
-function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min }
-function pick(arr){ return arr[Math.floor(Math.random()*arr.length)] }
-function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1) }
-
-// ── Sentence generation ──
-function generateSentence(){
-  const len = rand(5,15);
-  const words = [];
-  for(let i=0;i<len;i++) words.push(pick(WORDS));
-  return capitalize(words.join(' '))+'.'
-}
-
-// ── Paragraph generation ──
-function generateParagraph(){
-  const sentences = rand(3,7);
-  const parts = [];
-  for(let i=0;i<sentences;i++) parts.push(generateSentence());
-  return parts.join(' ')
-}
-
-// ── Generate ──
-function generate(){
-  const mode = document.getElementById('mode').value;
-  const count = parseInt(document.getElementById('count').value) || 3;
-  const clamped = Math.max(1,Math.min(20,count));
-  document.getElementById('count').value = clamped;
-
-  let result = '';
-  let wordCount = 0;
-  let sentenceCount = 0;
-
-  if(mode==='paragraphs'){
-    const paras = [];
-    for(let i=0;i<clamped;i++){
-      const p = generateParagraph();
-      paras.push(p);
-      sentenceCount += (p.match(/\. /g)||[]).length + (p.endsWith('.')?1:0);
-    }
-    result = paras.join('\n\n');
-    wordCount = result.split(/\s+/).filter(w=>w.length>0).length;
-  }else if(mode==='sentences'){
-    const sentences = [];
-    for(let i=0;i<clamped;i++) sentences.push(generateSentence());
-    result = sentences.join(' ');
-    sentenceCount = clamped;
-    wordCount = result.split(/\s+/).filter(w=>w.length>0).length;
-  }else{
-    const words = [];
-    for(let i=0;i<clamped;i++) words.push(pick(WORDS));
-    result = words.join(' ');
-    wordCount = clamped;
-  }
-
-  document.getElementById('output').value = result;
-  document.getElementById('stats').innerHTML =
-    '<span>📝 Words: '+wordCount+'</span>'+
-    (mode!=='words'?'<span>📄 Sentences: '+(sentenceCount||clamped)+'</span>':'')+
-    '<span>📐 Characters: '+result.length+'</span>';
-}
-
-// ── Copy ──
-function copyOutput(){
-  const t = document.getElementById('output');
-  if(!t.value) return;
-  navigator.clipboard.writeText(t.value).then(()=>{
-    const btn = event.target.closest('button');
-    if(btn){
-      const orig = btn.textContent;
-      btn.textContent = '✅ Copied!';
-      btn.style.background = 'var(--green)';
-      setTimeout(()=>{btn.textContent=orig;btn.style.background=''},1500);
-    }
-  });
-}
-
-// ── Generate on load ──
-generate();
-</script>
-
-</body>
-</html>
+170|<body>
+171|
+172|<header>
+173|  <h1>📝 LoremGen</h1>
+174|  <nav>
+175|    <a href="https://andreygorban1582-dev.github.io/keyhole/">KeyHole</a>
+176|    <button class="btn btn-sm" onclick="copyOutput()">📋 Copy</button>
+177|  </nav>
+178|</header>
+179|
+180|<main>
+181|  <div class="ad-slot">
+182|    📢 Advertisement — <a href="https://a-ads.com?partner=2305445">Advertise here</a>
+183|  </div>
+184|
+185|  <div class="tool-box">
+186|    <h2>⚡ Generate Lorem Ipsum</h2>
+187|
+188|    <div class="controls">
+189|      <div class="control-group">
+190|        <label for="mode">Mode</label>
+191|        <select id="mode">
+192|          <option value="paragraphs">Paragraphs</option>
+193|          <option value="sentences">Sentences</option>
+194|          <option value="words">Words</option>
+195|        </select>
+196|      </div>
+197|      <div class="control-group">
+198|        <label for="count">Count</label>
+199|        <input type="number" id="count" value="3" min="1" max="20">
+200|      </div>
+201|      <div class="control-group" style="justify-content:flex-end">
+202|        <button class="btn" onclick="generate()">⚡ Generate</button>
+203|      </div>
+204|    </div>
+205|
+206|    <div class="output-area">
+207|      <textarea class="output" id="output" readonly placeholder="Your lorem ipsum will appear here..."></textarea>
+208|      <div class="output-actions">
+209|        <button class="btn btn-sm btn-green" onclick="copyOutput()">📋 Copy to Clipboard</button>
+210|      </div>
+211|    </div>
+212|
+213|    <div class="info-row" id="stats"></div>
+214|  </div>
+215|
+216|  <div class="bmc-row">
+217|    <a href="https://www.buymeacoffee.com/keyhole" class="bmc" target="_blank">☕ Buy me a coffee</a>
+218|  </div>
+219|</main>
+220|
+221|<div class="footer-bar">© 2026 LoremGen — Free online Lorem Ipsum text generator</div>
+222|
+223|<script>
+224|// ── Lorem Ipsum word pool ──
+225|const WORDS = [
+226|  "lorem","ipsum","dolor","sit","amet","consectetur","adipiscing","elit",
+227|  "sed","do","eiusmod","tempor","incididunt","ut","labore","et","dolore",
+228|  "magna","aliqua","enim","ad","minim","veniam","quis","nostrud",
+229|  "exercitation","ullamco","laboris","nisi","ut","aliquip","ex","ea",
+230|  "commodo","consequat","duis","aute","irure","dolor","in",
+231|  "reprehenderit","in","voluptate","velit","esse","cillum","dolore","eu",
+232|  "fugiat","nulla","pariatur","excepteur","sint","occaecat","cupidatat",
+233|  "non","proident","sunt","in","culpa","qui","officia","deserunt",
+234|  "mollit","anim","id","est","laborum","praesent","sapien","massa",
+235|  "convallis","a","pellentesque","nec","egestas","non","nisi","aliquam",
+236|  "nulla","sit","amet","est","placerat","in","egestas","erat",
+237|  "imperdiet","sed","euismod","nisi","porta","lorem","mollis","aliquet",
+238|  "ut","porttitor","leo","a","diam","sollicitudin","tempor","id","eu",
+239|  "nisl","nunc","mi","ipsum","faucibus","vitae","aliquet","nec",
+240|  "ullamcorper","sit","amet","risus","nullam","eget","felis","eget",
+241|  "nunc","lobortis","mattis","aliquam","faucibus","purus","in","massa",
+242|  "tempor","nec","feugiat","nisl","pretium","fusce","id","velit","ut",
+243|  "tortor","pretium","viverra","suspendisse","potenti","nullam","ac",
+244|  "tortor","vitae","purus","faucibus","ornare","suspendisse","sed","nisi",
+245|  "lacus","sed","viverra","tellus","in","hac","habitasse","platea",
+246|  "dictumst","vestibulum","rhoncus","est","pellentesque","elit",
+247|  "ullamcorper","dignissim","cras","tincidunt","lobortis","feugiat",
+248|  "vivamus","at","augue","eget","arcu","dictum","varius","duis","at",
+249|  "consectetur","lorem","donec","massa","sapien","faucibus","et",
+250|  "molestie","ac","feugiat","sed","lectus","vestibulum","mattis",
+251|  "ullamcorper","velit","sed","ullamcorper","morbi","tincidunt","ornare",
+252|  "massa","eget","egestas","purus","viverra","accumsan","in","nisl",
+253|  "nisi","scelerisque","eu","ultrices","vitae","auctor","eu","augue",
+254|  "ut","lectus","arcu","bibendum","at","varius","vel","pharetra","vel",
+255|  "turpis","nunc","eget","lorem","dolor","sed","viverra","ipsum","nunc",
+256|  "aliquet","bibendum","enim","facilisis","gravida","neque","convallis",
+257|  "a","cras","semper","auctor","neque","vitae","tempus","quam",
+258|  "pellentesque","nec","nam","aliquam","sem","et","tortor","consequat"
+259|];
+260|
+261|// ── Helpers ──
+262|function rand(min,max){ return Math.floor(Math.random()*(max-min+1))+min }
+263|function pick(arr){ return arr[Math.floor(Math.random()*arr.length)] }
+264|function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1) }
+265|
+266|// ── Sentence generation ──
+267|function generateSentence(){
+268|  const len = rand(5,15);
+269|  const words = [];
+270|  for(let i=0;i<len;i++) words.push(pick(WORDS));
+271|  return capitalize(words.join(' '))+'.'
+272|}
+273|
+274|// ── Paragraph generation ──
+275|function generateParagraph(){
+276|  const sentences = rand(3,7);
+277|  const parts = [];
+278|  for(let i=0;i<sentences;i++) parts.push(generateSentence());
+279|  return parts.join(' ')
+280|}
+281|
+282|// ── Generate ──
+283|function generate(){
+284|  const mode = document.getElementById('mode').value;
+285|  const count = parseInt(document.getElementById('count').value) || 3;
+286|  const clamped = Math.max(1,Math.min(20,count));
+287|  document.getElementById('count').value = clamped;
+288|
+289|  let result = '';
+290|  let wordCount = 0;
+291|  let sentenceCount = 0;
+292|
+293|  if(mode==='paragraphs'){
+294|    const paras = [];
+295|    for(let i=0;i<clamped;i++){
+296|      const p = generateParagraph();
+297|      paras.push(p);
+298|      sentenceCount += (p.match(/\. /g)||[]).length + (p.endsWith('.')?1:0);
+299|    }
+300|    result = paras.join('\n\n');
+301|    wordCount = result.split(/\s+/).filter(w=>w.length>0).length;
+302|  }else if(mode==='sentences'){
+303|    const sentences = [];
+304|    for(let i=0;i<clamped;i++) sentences.push(generateSentence());
+305|    result = sentences.join(' ');
+306|    sentenceCount = clamped;
+307|    wordCount = result.split(/\s+/).filter(w=>w.length>0).length;
+308|  }else{
+309|    const words = [];
+310|    for(let i=0;i<clamped;i++) words.push(pick(WORDS));
+311|    result = words.join(' ');
+312|    wordCount = clamped;
+313|  }
+314|
+315|  document.getElementById('output').value = result;
+316|  document.getElementById('stats').innerHTML =
+317|    '<span>📝 Words: '+wordCount+'</span>'+
+318|    (mode!=='words'?'<span>📄 Sentences: '+(sentenceCount||clamped)+'</span>':'')+
+319|    '<span>📐 Characters: '+result.length+'</span>';
+320|}
+321|
+322|// ── Copy ──
+323|function copyOutput(){
+324|  const t = document.getElementById('output');
+325|  if(!t.value) return;
+326|  navigator.clipboard.writeText(t.value).then(()=>{
+327|    const btn = event.target.closest('button');
+328|    if(btn){
+329|      const orig = btn.textContent;
+330|      btn.textContent = '✅ Copied!';
+331|      btn.style.background = 'var(--green)';
+332|      setTimeout(()=>{btn.textContent=orig;btn.style.background=''},1500);
+333|    }
+334|  });
+335|}
+336|
+337|// ── Generate on load ──
+338|generate();
+339|</script>
+340|
+341|</body>
+342|</html>
+343|
